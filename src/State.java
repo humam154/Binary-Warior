@@ -78,7 +78,7 @@ public class State {
         return playerIndexColumn;
     }
 
-    public State deepCopy(State oldState, State newState){
+    private State deepCopy(State oldState, State newState){
         newState.rows = oldState.rows;
         newState.columns = oldState.columns;
         newState.grid = oldState.grid;
@@ -89,7 +89,7 @@ public class State {
     }
 
 
-    public void moveRight(char [][] grid, int indexRow, int indexColumn) {
+    private void moveRight(char [][] grid, int indexRow, int indexColumn) {
         if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
             if(moveRightIsValid(grid, indexRow, indexColumn)){
 
