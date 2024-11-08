@@ -19,6 +19,7 @@ public class State {
         this.playerIndexColumn = playerIndexColumn;
         State.numOfGoals = numOfGoals;
         this.grid = new char[rows][columns];
+        this.states = new LinkedList<State>();
     }
 
     public void setRows(int rows){
@@ -278,24 +279,26 @@ public class State {
         System.out.println("enter A to move Left");
         System.out.println("enter Z to exit");
 
+        this.printGrid();
+
         while(true){
            x = in.next().charAt(0);
 
            switch (x){
 
-               case 'W' :
+               case 'w' :
                    moveUp(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
-               case 'S':
+               case 's':
                    moveDown(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
-               case 'D':
+               case 'd':
                    moveRight(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
-               case 'A':
+               case 'a':
                    moveLeft(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
-               case 'Z':
+               case 'z':
                    System.out.println("Exiting game.");
                    return;
                default:
@@ -306,7 +309,8 @@ public class State {
                System.out.println("congrats, you won");
                break;
            }
-           else if()
+
+           printGrid();
         }
     }
 }
