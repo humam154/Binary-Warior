@@ -197,7 +197,6 @@ public class State {
                     }
                 }
             }
-            return 'x';
         }
         throw new ArrayIndexOutOfBoundsException();
     }
@@ -211,7 +210,6 @@ public class State {
                     }
                 }
             }
-            return 'x';
         }
         throw new ArrayIndexOutOfBoundsException();
     }
@@ -225,7 +223,6 @@ public class State {
                     }
                 }
             }
-            return 'x';
         }
         throw new ArrayIndexOutOfBoundsException();
     }
@@ -239,7 +236,6 @@ public class State {
                     }
                 }
             }
-            return 'x';
         }
         throw new ArrayIndexOutOfBoundsException();
     }
