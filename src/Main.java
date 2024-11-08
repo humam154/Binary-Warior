@@ -6,7 +6,8 @@ public class Main {
                 {'s', 's', 's', 's', 's'},
                 {'s', 'o', ' ', 'o', 's'},
                 {'s', 'g', 'p', 'g', 's'},
-                {'s', 'o', 'o', 'o', 's'},
+                {'s', 'o', ' ', 'o', 's'},
+                {'s', 'o', 'g', 'o', 's'},
                 {'s', 's', 's', 's', 's'}
         };
 
@@ -14,7 +15,7 @@ public class Main {
         int columns = grid[0].length;
         int playerIndexRow = 2;
         int playerIndexColumn = 2;
-        int numOfGoals = 2;
+        int numOfGoals = 3;
 
         State state = new State( rows,  columns,  playerIndexRow,  playerIndexColumn, numOfGoals);
         state.setGrid(grid);
