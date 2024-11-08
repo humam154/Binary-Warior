@@ -54,6 +54,7 @@ public class State {
                     }
                 }
             }
+            initial.grid = grid;
             this.states.add(initial);
     }
 
@@ -100,26 +101,31 @@ public class State {
         return newState;
     }
 
-    private void moveRight(char [][] grid, int indexRow, int indexColumn) {
+    private boolean moveRight(char [][] grid, int indexRow, int indexColumn) {
         if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
             while (moveRightIsValid(grid, indexRow, indexColumn)){
                 if(getRight(grid, indexRow, indexColumn) == 'g'){
                     grid[indexRow][indexColumn] = ' ';
                     indexColumn += 1;
                     grid[indexRow][indexColumn] = 'p';
+                    this.playerIndexRow = indexRow;
+                    this.playerIndexColumn = indexColumn;
                     numOfGoals--;
                     break;
                 }
                 if (getRight(grid, indexRow, indexColumn) == 's'){
                     this.setGrid(this.states.getFirst().grid);
                     System.out.println("Game Over");
-                    return;
+                    return true;
                 }
                 grid[indexRow][indexColumn] = ' ';
                 indexColumn += 1;
                 grid[indexRow][indexColumn] = 'p';
+                this.playerIndexRow = indexRow;
+                this.playerIndexColumn = indexColumn;
             }
         }
+            return false;
     }
 
     private void moveLeft(char [][] grid, int indexRow, int indexColumn) {
@@ -129,6 +135,8 @@ public class State {
                     grid[indexRow][indexColumn] = ' ';
                     indexColumn -= 1;
                     grid[indexRow][indexColumn] = 'p';
+                    this.playerIndexRow = indexRow;
+                    this.playerIndexColumn = indexColumn;
                     numOfGoals--;
                     break;
                 }
@@ -140,6 +148,8 @@ public class State {
                 grid[indexRow][indexColumn] = ' ';
                 indexColumn -= 1;
                 grid[indexRow][indexColumn] = 'p';
+                this.playerIndexRow = indexRow;
+                this.playerIndexColumn = indexColumn;
             }
         }
     }
@@ -151,17 +161,20 @@ public class State {
                     grid[indexRow][indexColumn] = ' ';
                     indexRow -= 1;
                     grid[indexRow][indexColumn] = 'p';
+                    this.playerIndexRow = indexRow;
+                    this.playerIndexColumn = indexColumn;
                     numOfGoals--;
                     break;
                 }
                 if (getUp(grid, indexRow, indexColumn) == 's'){
-                    this.setGrid(this.states.getFirst().grid);
                     System.out.println("Game Over");
                     return;
                 }
                 grid[indexRow][indexColumn] = ' ';
                 indexRow -= 1;
                 grid[indexRow][indexColumn] = 'p';
+                this.playerIndexRow = indexRow;
+                this.playerIndexColumn = indexColumn;
             }
         }
     }
@@ -173,6 +186,8 @@ public class State {
                     grid[indexRow][indexColumn] = ' ';
                     indexRow += 1;
                     grid[indexRow][indexColumn] = 'p';
+                    this.playerIndexRow = indexRow;
+                    this.playerIndexColumn = indexColumn;
                     numOfGoals--;
                     break;
                 }
@@ -184,6 +199,8 @@ public class State {
                 grid[indexRow][indexColumn] = ' ';
                 indexRow += 1;
                 grid[indexRow][indexColumn] = 'p';
+                this.playerIndexRow = indexRow;
+                this.playerIndexColumn = indexColumn;
             }
         }
     }
@@ -279,7 +296,7 @@ public class State {
 
         while(true){
            x = in.next().charAt(0);
-
+           boolean restart = false;
            switch (x){
 
                case 'w' :
@@ -289,7 +306,7 @@ public class State {
                    moveDown(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
                case 'd':
-                   moveRight(this.grid, this.playerIndexRow, this.playerIndexColumn);
+                   restart = moveRight(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
                case 'a':
                    moveLeft(this.grid, this.playerIndexRow, this.playerIndexColumn);
@@ -304,6 +321,9 @@ public class State {
            if (gameWon()){
                System.out.println("congrats, you won");
                break;
+           }
+           if (restart){
+               System.out.println("game over, restarting");
            }
 
            printGrid();
