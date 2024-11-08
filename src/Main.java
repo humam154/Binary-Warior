@@ -4,15 +4,15 @@ public class Main {
     public static void main(String[] args) {
         char [][] grid =
                 {
-                        {'1', '2', '3','4'},
-                        {'5','6','7','8'},
-                        {'9','A','B','C'},
-                        {'D','E','F','G'}
+                        {'s', 's', 's','s'},
+                        {'s','p','5','s'},
+                        {'s','p','g','G'},
+                        {'s','s','S','s'}
                 };
 
 
         printGrid(grid);
-        System.out.print(getRight(grid, 3, 3));
+        System.out.print(getRight(grid, 1, 1));
     }
 
 

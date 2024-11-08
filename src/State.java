@@ -35,11 +35,22 @@ public class State {
     }
 
     public void setGrid(char [][] grid){
-        if (grid.length == this.rows && grid[0].length == this.columns){
             for(int i = 0 ; i < this.rows ; i ++){
                 System.arraycopy(grid[i], 0, this.grid[i], 0, columns);
             }
-        }
+            State initial = new State();
+            initial.rows = grid.length;
+            initial.columns = grid[0].length;
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (grid[i][j] == 'p') {
+                        i = playerIndexRow;
+                        j = playerIndexColumn;
+                        break;
+                    }
+                }
+            }
+            this.states.add(initial);
     }
 
     public void printGrid(){
@@ -51,20 +62,20 @@ public class State {
         }
     }
 
-    public int getPlayerIndexRow() {
-        return playerIndexRow;
-    }
-
     public void setPlayerIndexRow(int playerIndexRow) {
         this.playerIndexRow = playerIndexRow;
     }
 
-    public int getPlayerIndexColumn() {
-        return playerIndexColumn;
+    public int getPlayerIndexRow() {
+        return playerIndexRow;
     }
 
     public void setPlayerIndexColumn(int playerIndexColumn) {
         this.playerIndexColumn = playerIndexColumn;
+    }
+
+    public int getPlayerIndexColumn() {
+        return playerIndexColumn;
     }
 
     public State deepCopy(State oldState, State newState){
@@ -79,21 +90,18 @@ public class State {
 
 
     public void moveRight(char [][] grid, int indexRow, int indexColumn) {
-        if (this.checkArray(grid, indexRow, indexColumn)) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < columns; j++) {
-                    if (grid[i][j] == grid[indexRow][indexColumn]) {
+        if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
+            if(moveRightIsValid(grid, indexRow, indexColumn)){
 
-                    }
-                }
             }
         }
+
     }
 
-    private char getRight(char [][] grid, int indexRow, int indexColumn){
-        if(this.checkArray(grid, indexRow, indexColumn)) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < columns; j++) {
+    private char getRight (char [][] grid, int indexRow, int indexColumn){
+        if(this.checkIndexIsValid(grid, indexRow, indexColumn)) {
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
                     if (i == indexRow && j == indexColumn) {
                         return grid[i][j + 1];
                     }
@@ -104,7 +112,65 @@ public class State {
         throw new ArrayIndexOutOfBoundsException();
     }
 
-    private boolean checkArray(char [][]grid, int row, int column){
+    private char getLeft (char [][] grid, int indexRow, int indexColumn){
+        if(this.checkIndexIsValid(grid, indexRow, indexColumn)) {
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (i == indexRow && j == indexColumn) {
+                        return grid[i][j-1];
+                    }
+                }
+            }
+            return 'x';
+        }
+        throw new ArrayIndexOutOfBoundsException();
+    }
+
+    private char getUp (char [][] grid, int indexRow, int indexColumn){
+        if(this.checkIndexIsValid(grid, indexRow, indexColumn)) {
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (i == indexRow && j == indexColumn) {
+                        return grid[i-1][j];
+                    }
+                }
+            }
+            return 'x';
+        }
+        throw new ArrayIndexOutOfBoundsException();
+    }
+
+    private char getDown (char [][] grid, int indexRow, int indexColumn){
+        if(this.checkIndexIsValid(grid, indexRow, indexColumn)) {
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (i == indexRow && j == indexColumn) {
+                        return grid[i+1][j];
+                    }
+                }
+            }
+            return 'x';
+        }
+        throw new ArrayIndexOutOfBoundsException();
+    }
+
+    private boolean moveRightIsValid (char [][] grid, int indexRow, int indexColumn){
+        return getRight(grid, indexRow, indexColumn) != 'o' || getRight(grid, indexRow, indexColumn) != 's';
+    }
+
+    private boolean moveLeftIsValid (char [][] grid, int indexRow, int indexColumn){
+        return getLeft(grid, indexRow, indexColumn) != 'o' || getRight(grid, indexRow, indexColumn) != 's';
+    }
+
+    private boolean moveUpIsValid (char [][] grid, int indexRow, int indexColumn){
+        return getUp(grid, indexRow, indexColumn) != 'o' || getRight(grid, indexRow, indexColumn) != 's';
+    }
+
+    private boolean moveDownIsValid (char [][] grid, int indexRow, int indexColumn){
+        return getDown(grid, indexRow, indexColumn) != 'o' || getRight(grid, indexRow, indexColumn) != 's';
+    }
+
+    private boolean checkIndexIsValid(char [][]grid, int row, int column){
         return row <= grid.length && column <= grid[0].length;
     }
 }
