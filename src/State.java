@@ -1,13 +1,15 @@
+import java.util.List;
 import java.util.Scanner;
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class State {
 
     private int rows,columns;
     private char [][] grid;
     private int playerIndexRow, playerIndexColumn;
-    private LinkedList<State> states;
     private static int numOfGoals;
+    private char [][] initialGrid;
 
     public State(){
 
@@ -19,7 +21,7 @@ public class State {
         this.playerIndexColumn = playerIndexColumn;
         State.numOfGoals = numOfGoals;
         this.grid = new char[rows][columns];
-        this.states = new LinkedList<State>();
+        this.initialGrid = new char[rows][columns];
     }
 
     public void setRows(int rows){
@@ -42,26 +44,25 @@ public class State {
             for(int i = 0 ; i < this.rows ; i ++){
                 System.arraycopy(grid[i], 0, this.grid[i], 0, columns);
             }
-            State initial = new State();
-            initial.rows = grid.length;
-            initial.columns = grid[0].length;
-            for (int i = 0; i < grid.length; i++) {
-                for (int j = 0; j < grid[0].length; j++) {
-                    if (grid[i][j] == 'p') {
-                        i = playerIndexRow;
-                        j = playerIndexColumn;
-                        break;
-                    }
-                }
+
+            for (int i = 0 ; i < this.rows ; i ++){
+                System.arraycopy(grid[i], 0, this.initialGrid[i], 0, this.columns);
             }
-            initial.grid = grid;
-            this.states.add(initial);
     }
 
     public void printGrid(){
         for (int i = 0 ; i < rows ; i ++) {
             for (int j = 0 ; j < columns ; j ++){
                 System.out.print(grid[i][j] + "\t");
+            }
+            System.out.println();
+        }
+    }
+
+    public void printInitGrid(){
+        for (int i = 0 ; i < rows ; i ++) {
+            for (int j = 0 ; j < columns ; j ++){
+                System.out.print(this.initialGrid[i][j] + "\t");
             }
             System.out.println();
         }
@@ -95,15 +96,12 @@ public class State {
         newState.rows = oldState.rows;
         newState.columns = oldState.columns;
         newState.grid = oldState.grid;
-        newState.states = new LinkedList<State>();
-        newState.states.addAll(oldState.states);
 
         return newState;
     }
 
     private boolean moveRight(char [][] grid, int indexRow, int indexColumn) {
         if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
-            while (moveRightIsValid(grid, indexRow, indexColumn)){
                 if(getRight(grid, indexRow, indexColumn) == 'g'){
                     grid[indexRow][indexColumn] = ' ';
                     indexColumn += 1;
@@ -111,26 +109,26 @@ public class State {
                     this.playerIndexRow = indexRow;
                     this.playerIndexColumn = indexColumn;
                     numOfGoals--;
-                    break;
+                    return false;
                 }
                 if (getRight(grid, indexRow, indexColumn) == 's'){
-                    this.setGrid(this.states.getFirst().grid);
-                    System.out.println("Game Over");
+                    this.setGrid(initialGrid);
                     return true;
+                }
+                if(!moveRightIsValid(grid, indexRow, indexColumn)){
+                    return false;
                 }
                 grid[indexRow][indexColumn] = ' ';
                 indexColumn += 1;
                 grid[indexRow][indexColumn] = 'p';
                 this.playerIndexRow = indexRow;
                 this.playerIndexColumn = indexColumn;
-            }
         }
-            return false;
+        return false;
     }
 
-    private void moveLeft(char [][] grid, int indexRow, int indexColumn) {
+    private boolean moveLeft(char [][] grid, int indexRow, int indexColumn) {
         if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
-            while (moveLeftIsValid(grid, indexRow, indexColumn)){
                 if(getLeft(grid, indexRow, indexColumn) == 'g'){
                     grid[indexRow][indexColumn] = ' ';
                     indexColumn -= 1;
@@ -138,25 +136,26 @@ public class State {
                     this.playerIndexRow = indexRow;
                     this.playerIndexColumn = indexColumn;
                     numOfGoals--;
-                    break;
+                    return false;
                 }
                 if (getLeft(grid, indexRow, indexColumn) == 's'){
-                    this.setGrid(this.states.getFirst().grid);
-                    System.out.println("Game Over");
-                    return;
+                    this.setGrid(initialGrid);
+                    return true;
+                }
+                if (!moveLeftIsValid(grid, indexRow, indexColumn)){
+                    return false;
                 }
                 grid[indexRow][indexColumn] = ' ';
                 indexColumn -= 1;
                 grid[indexRow][indexColumn] = 'p';
                 this.playerIndexRow = indexRow;
                 this.playerIndexColumn = indexColumn;
-            }
         }
+        return false;
     }
 
-    private void moveUp(char [][] grid, int indexRow, int indexColumn) {
+    private boolean moveUp(char [][] grid, int indexRow, int indexColumn) {
         if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
-            while (moveUpIsValid(grid, indexRow, indexColumn)){
                 if(getUp(grid, indexRow, indexColumn) == 'g'){
                     grid[indexRow][indexColumn] = ' ';
                     indexRow -= 1;
@@ -164,24 +163,28 @@ public class State {
                     this.playerIndexRow = indexRow;
                     this.playerIndexColumn = indexColumn;
                     numOfGoals--;
-                    break;
+                    return false;
                 }
                 if (getUp(grid, indexRow, indexColumn) == 's'){
-                    System.out.println("Game Over");
-                    return;
+                    this.setGrid(initialGrid);
+                    return true;
                 }
                 grid[indexRow][indexColumn] = ' ';
-                indexRow -= 1;
-                grid[indexRow][indexColumn] = 'p';
-                this.playerIndexRow = indexRow;
-                this.playerIndexColumn = indexColumn;
-            }
+                if (!moveUpIsValid(grid, indexRow, indexColumn)){
+                    return false;
+                }
+                if (indexRow > 0) {
+                    indexRow -= 1;
+                    grid[indexRow][indexColumn] = 'p';
+                    this.playerIndexRow = indexRow;
+                    this.playerIndexColumn = indexColumn;
+                }
         }
+        return false;
     }
 
-    private void moveDown(char [][] grid, int indexRow, int indexColumn) {
+    private boolean moveDown(char [][] grid, int indexRow, int indexColumn) {
         if (this.checkIndexIsValid(grid, indexRow, indexColumn)) {
-            while (moveDownIsValid(grid, indexRow, indexColumn)){
                 if(getDown(grid, indexRow, indexColumn) == 'g'){
                     grid[indexRow][indexColumn] = ' ';
                     indexRow += 1;
@@ -189,12 +192,14 @@ public class State {
                     this.playerIndexRow = indexRow;
                     this.playerIndexColumn = indexColumn;
                     numOfGoals--;
-                    break;
+                    return false;
                 }
                 if (getDown(grid, indexRow, indexColumn) == 's'){
-                    this.setGrid(this.states.getFirst().grid);
-                    System.out.println("Game Over");
-                    return;
+                    this.setGrid(initialGrid);
+                    return true;
+                }
+                if (!moveDownIsValid(grid, indexRow, indexColumn)){
+                    return false;
                 }
                 grid[indexRow][indexColumn] = ' ';
                 indexRow += 1;
@@ -202,7 +207,7 @@ public class State {
                 this.playerIndexRow = indexRow;
                 this.playerIndexColumn = indexColumn;
             }
-        }
+        return false;
     }
 
     private char getRight (char [][] grid, int indexRow, int indexColumn){
@@ -236,7 +241,7 @@ public class State {
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[0].length; j++) {
                     if (i == indexRow && j == indexColumn) {
-                        return grid[i-1][j];
+                            return grid[i-1][j];
                     }
                 }
             }
@@ -277,10 +282,109 @@ public class State {
         return row <= grid.length && column <= grid[0].length;
     }
 
+    public List<String> getValidMoves (char [][] grid, int indexRow, int indexColumn){
+        LinkedList<String> list = new LinkedList<>();
+        if(moveRightIsValid(grid, indexRow, indexColumn) && getRight(grid, indexRow, indexColumn) != 's'){
+            list.add("right");
+        }
+        if(moveLeftIsValid(grid, indexRow, indexColumn) && getLeft(grid, indexRow, indexColumn) != 's'){
+            list.add("left");
+        }
+        if(moveUpIsValid(grid, indexRow, indexColumn) && getUp(grid, indexRow, indexColumn) != 's'){
+            list.add("up");
+        }
+        if(moveDownIsValid(grid, indexRow, indexColumn) && getDown(grid, indexRow, indexColumn) != 's'){
+            list.add("down");
+        }
+        return list;
+    }
+
     private boolean gameWon(){
         return (numOfGoals == 0);
     }
 
+    public List<State> getNextStates(char [][] grid, int indexRow, int indexColumn){
+        var list = this.getValidMoves(grid, indexRow, indexColumn);
+        var finalList = new LinkedList<State>();
+        int playerRow = indexRow;
+        int playerColumn = indexColumn;
+        for (int i = 0 ; i < list.size() ; i ++){
+            if(!list.isEmpty() && list.get(i).equals("right")){
+                char [][] rightGrid = new char[grid.length][grid[0].length];
+                int rightRow = playerRow;
+                int rightColumn = playerColumn;
+                for(int k = 0 ; k < grid.length ; k ++){
+                    System.arraycopy(grid[i], 0, rightGrid[k], 0, grid[0].length);
+                }
+                this.moveRight(rightGrid, playerRow, playerColumn);
+                var state = new State(rightGrid.length, rightGrid[0].length, rightRow, rightColumn, numOfGoals);
+                state.setGrid(rightGrid);
+                finalList.add(state);
+                list.remove("right");
+            }
+            if(!list.isEmpty() && list.get(i).equals("left")){
+                char [][] leftGrid = new char[grid.length][grid[0].length];
+                int leftRow = playerRow;
+                int leftColumn = playerColumn;
+                for(int k = 0 ; k < grid.length ; k ++){
+                    System.arraycopy(grid[i], 0, leftGrid[k], 0, grid[0].length);
+                }
+                this.moveLeft(leftGrid, leftRow, leftColumn);
+                var state = new State(leftGrid.length, leftGrid[0].length, leftRow, leftColumn, numOfGoals);
+                state.setGrid(leftGrid);
+                finalList.add(state);
+                list.remove("left");
+            }
+            if(!list.isEmpty() && list.get(i).equals("up")){
+                char [][] upGrid = new char[grid.length][grid[0].length];
+                int upRow = playerRow;
+                int upColumn = playerColumn;
+                for(int k = 0 ; k < grid.length ; k ++){
+                    System.arraycopy(grid[i], 0, upGrid[k], 0, grid[0].length);
+                }
+                this.moveUp(upGrid, upRow, upColumn);
+                var state = new State(upGrid.length, upGrid[0].length, upRow, upColumn, numOfGoals);
+                state.setGrid(upGrid);
+                finalList.add(state);
+                list.remove("up");
+            }
+            if(!list.isEmpty() && list.get(i).equals("down")){
+                char [][] downGrid = new char[grid.length][grid[0].length];
+                int downRow = playerRow;
+                int downColumn = playerColumn;
+                for(int k = 0 ; k < grid.length ; k ++){
+                    System.arraycopy(grid[i], 0, downGrid[k], 0, grid[0].length);
+                }
+                this.moveDown(downGrid, downRow, downColumn);
+                var state = new State(downGrid.length, downGrid[0].length, downRow, downColumn, numOfGoals);
+                state.setGrid(grid);
+                finalList.add(state);
+                list.remove("down");
+            }
+        }
+        return finalList;
+    }
+
+
+    public void DFS(char [][] grid, int indexRow, int indexColumn){
+        var stack = new Stack<State>();
+        int i = 0;
+        //stack.push(this.states.getFirst());
+
+        while(!stack.isEmpty()){
+            i++;
+            var state = stack.pop();
+            if(state.gameWon()){
+                System.out.println("Game Won"  + "moves took=" + i);
+                break;
+            }
+            var list = state.getNextStates(grid, indexRow, indexColumn);
+
+            for(int j = 0 ; j < list.size() ; j ++)
+                stack.push(list.get(j));
+
+        }
+    }
 
     public void play(){
         char x;
@@ -300,16 +404,16 @@ public class State {
            switch (x){
 
                case 'w' :
-                   moveUp(this.grid, this.playerIndexRow, this.playerIndexColumn);
+                   restart = moveUp(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
                case 's':
-                   moveDown(this.grid, this.playerIndexRow, this.playerIndexColumn);
+                   restart = moveDown(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
                case 'd':
-                   restart = moveRight(this.grid, this.playerIndexRow, this.playerIndexColumn);
+                    restart = moveRight(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
                case 'a':
-                   moveLeft(this.grid, this.playerIndexRow, this.playerIndexColumn);
+                   restart = moveLeft(this.grid, this.playerIndexRow, this.playerIndexColumn);
                    break;
                case 'z':
                    System.out.println("Exiting game.");
@@ -324,8 +428,9 @@ public class State {
            }
            if (restart){
                System.out.println("game over, restarting");
+               this.printInitGrid();
+               continue;
            }
-
            printGrid();
         }
     }
