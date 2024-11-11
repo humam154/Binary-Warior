@@ -3,18 +3,16 @@
 public class Main {
     public static void main(String[] args) {
         char[][] grid = {
-                {'s', 's', 'o', 's', 's', 'o', 'o', 's'},
-                {'s', 'g', ' ', 'o', ' ', 'o', 'o', 's'},
-                {'o', ' ', ' ', 'g', ' ', 'p', ' ', 's'},
-                {'s', 'o', ' ', 'o', ' ', 'o', 'o', 's'},
-                {'s', 'o', 'g', 'o', ' ', 'o', 'o', 's'},
-                {'s', 's', 'o', 's', ' ', 'o', 'o', 's'}
+                {'s', 'o', 'o', 'o', 'o', 's'},
+                {'s', 'g', ' ', ' ', 'g', 's'},
+                {'s', ' ', 'g', ' ', ' ', 's'},
+                {'s', ' ', ' ', ' ', ' ', 's'},
+                {'s', ' ', 'p', ' ', 'g', 's'},
+                {'s', 'o', 'o', 'o', 'o', 's'}
         };
 
         int rows = grid.length;
         int columns = grid[0].length;
-        int playerIndexRow = 2;
-        int playerIndexColumn = 6;
         int numOfGoals = 0;
         for (char[] chars : grid) {
             for (int j = 0; j < columns; j++) {
@@ -23,17 +21,12 @@ public class Main {
             }
         }
 
-        State state = new State( rows,  columns,  playerIndexRow,  playerIndexColumn, numOfGoals);
+
+        State state = new State( rows,  columns, numOfGoals);
         state.setGrid(grid);
 
-
-        var list = state.getNextStates(grid, playerIndexRow, playerIndexColumn);
-
-        for (int i = 0 ; i < list.size() ; i ++){
-            list.get(i).printGrid();
-            System.out.println();
-        }
-
+        //state.play();
+        state.BFS();
 
     }
 
