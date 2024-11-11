@@ -1,7 +1,4 @@
-import java.util.List;
-import java.util.Scanner;
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.*;
 
 public class State {
 
@@ -303,88 +300,68 @@ public class State {
         return (numOfGoals == 0);
     }
 
-    public List<State> getNextStates(char [][] grid, int indexRow, int indexColumn){
+    public List<State> getNextStates(char[][] grid, int indexRow, int indexColumn) {
+
         var list = this.getValidMoves(grid, indexRow, indexColumn);
         var finalList = new LinkedList<State>();
-        int playerRow = indexRow;
-        int playerColumn = indexColumn;
-        for (int i = 0 ; i < list.size() ; i ++){
-            if(!list.isEmpty() && list.get(i).equals("right")){
-                char [][] rightGrid = new char[grid.length][grid[0].length];
-                int rightRow = playerRow;
-                int rightColumn = playerColumn;
-                for(int k = 0 ; k < grid.length ; k ++){
-                    System.arraycopy(grid[i], 0, rightGrid[k], 0, grid[0].length);
-                }
-                this.moveRight(rightGrid, playerRow, playerColumn);
-                var state = new State(rightGrid.length, rightGrid[0].length, rightRow, rightColumn, numOfGoals);
-                state.setGrid(rightGrid);
-                finalList.add(state);
-                list.remove("right");
+
+        for (int i = 0 ; i <list.size() ; i ++) {
+            char[][] newGrid = new char[grid.length][grid[0].length];
+            for (int k = 0; k < grid.length; k++) {
+                System.arraycopy(grid[k], 0, newGrid[k], 0, grid[0].length);  // Deep copy the grid
             }
-            if(!list.isEmpty() && list.get(i).equals("left")){
-                char [][] leftGrid = new char[grid.length][grid[0].length];
-                int leftRow = playerRow;
-                int leftColumn = playerColumn;
-                for(int k = 0 ; k < grid.length ; k ++){
-                    System.arraycopy(grid[i], 0, leftGrid[k], 0, grid[0].length);
-                }
-                this.moveLeft(leftGrid, leftRow, leftColumn);
-                var state = new State(leftGrid.length, leftGrid[0].length, leftRow, leftColumn, numOfGoals);
-                state.setGrid(leftGrid);
-                finalList.add(state);
-                list.remove("left");
+            int newRow = indexRow;
+            int newColumn = indexColumn;
+
+
+            if (list.get(i).equals("right")) {
+                this.moveRight(newGrid, newRow, newColumn);
+            } else if (list.get(i).equals("left")) {
+                this.moveLeft(newGrid, newRow, newColumn);
+            } else if (list.get(i).equals("up")){
+                this.moveUp(newGrid, newRow, newColumn);
+            } else if (list.get(i).equals("down")) {
+                this.moveDown(newGrid, newRow, newColumn);
             }
-            if(!list.isEmpty() && list.get(i).equals("up")){
-                char [][] upGrid = new char[grid.length][grid[0].length];
-                int upRow = playerRow;
-                int upColumn = playerColumn;
-                for(int k = 0 ; k < grid.length ; k ++){
-                    System.arraycopy(grid[i], 0, upGrid[k], 0, grid[0].length);
-                }
-                this.moveUp(upGrid, upRow, upColumn);
-                var state = new State(upGrid.length, upGrid[0].length, upRow, upColumn, numOfGoals);
-                state.setGrid(upGrid);
-                finalList.add(state);
-                list.remove("up");
-            }
-            if(!list.isEmpty() && list.get(i).equals("down")){
-                char [][] downGrid = new char[grid.length][grid[0].length];
-                int downRow = playerRow;
-                int downColumn = playerColumn;
-                for(int k = 0 ; k < grid.length ; k ++){
-                    System.arraycopy(grid[i], 0, downGrid[k], 0, grid[0].length);
-                }
-                this.moveDown(downGrid, downRow, downColumn);
-                var state = new State(downGrid.length, downGrid[0].length, downRow, downColumn, numOfGoals);
-                state.setGrid(grid);
-                finalList.add(state);
-                list.remove("down");
-            }
+
+            var newState = new State(newGrid.length, newGrid[0].length, newRow, newColumn, numOfGoals);
+            newState.setGrid(newGrid);
+            finalList.add(newState);
         }
+
         return finalList;
     }
 
-
     public void DFS(char [][] grid, int indexRow, int indexColumn){
         var stack = new Stack<State>();
-        int i = 0;
-        //stack.push(this.states.getFirst());
+        int moves = 0;
+        var stateDFS = new State(grid.length, grid[0].length, indexRow, indexColumn, numOfGoals);
+        stateDFS.setGrid(initialGrid);
+        stateDFS.printGrid();
+        stack.push(stateDFS);
+
+
+        HashMap<State, Boolean> visited = new HashMap<State, Boolean>();
 
         while(!stack.isEmpty()){
-            i++;
+            moves++;
             var state = stack.pop();
             if(state.gameWon()){
-                System.out.println("Game Won"  + "moves took=" + i);
+                System.out.println("Game Won"  + "moves took=" + moves);
                 break;
             }
             var list = state.getNextStates(grid, indexRow, indexColumn);
 
-            for(int j = 0 ; j < list.size() ; j ++)
-                stack.push(list.get(j));
+            for (State value : list){
+                if(!visited.containsKey(value)){
+                    visited.put(value, true);
+                    stack.push(value);
+                }
+            }
 
         }
     }
+
 
     public void play(){
         char x;
