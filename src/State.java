@@ -5,6 +5,7 @@ public class State {
     public int rows,columns;
     private char [][] grid;
     private static int numOfGoals;
+    private static int cost = 0;
 
     public State(){
     }
@@ -56,6 +57,14 @@ public class State {
         State.numOfGoals = numOfGoals;
     }
 
+    public static int getCost() {
+        return cost;
+    }
+
+    public static void setCost(int cost) {
+        State.cost = cost;
+    }
+
     private State deepCopy(){
         State copy = new State();
         copy.setRows(rows);
@@ -79,23 +88,24 @@ public class State {
         int numOfRows =copy.grid.length;
         int numOfColumns = copy.grid[0].length;
 
+        outerLoop:
         for (int i = 0; i < numOfRows; i++) {
             for (int j = 0; j < numOfColumns; j++) {
                 if (copy.grid[i][j] == 'p') {
-                    if (j < numOfColumns - 1 && copy.grid[i][j+1] == ' ') {
-                        copy.grid[i][j + 1] = 'p';
-                        copy.grid[i][j] = ' ';
-                        return copy;
-                    } else if (j < numOfColumns - 1 && grid[i][j+1] == 'g') {
+                    if (j < numOfColumns - 1 && copy.grid[i][j+1] == 'g') {
                         copy.grid[i][j+1] = 'p';
                         copy.grid[i][j] = ' ';
                         numOfGoals--;
-                        return copy;
+                        break outerLoop;
+                    } else if (j < numOfColumns - 1 && grid[i][j+1] == ' ') {
+                        copy.grid[i][j + 1] = 'p';
+                        copy.grid[i][j] = ' ';
+                        break outerLoop;
                     }
                 }
             }
         }
-
+        cost += 3;
         return copy;
     }
 
@@ -104,22 +114,24 @@ public class State {
         int numOfRows =copy.grid.length;
         int numOfColumns = copy.grid[0].length;
 
+        outerLoop:
         for (int i = 0; i < numOfRows; i++) {
             for (int j = 0; j < numOfColumns; j++) {
                 if (copy.grid[i][j] == 'p') {
-                    if (j > 0 && copy.grid[i][j - 1] == ' ') {
-                        copy.grid[i][j - 1] = 'p';
-                        copy.grid[i][j] = ' ';
-                        return copy;
-                    } else if (j > 0 && grid[i][j - 1] == 'g') {
+                    if (j > 0 && copy.grid[i][j - 1] == 'g') {
                         copy.grid[i][j-1] = 'p';
                         copy.grid[i][j] = ' ';
                         numOfGoals--;
-                        return copy;
+                        break outerLoop;
+                    } else if (j > 0 && grid[i][j - 1] == ' ') {
+                        copy.grid[i][j - 1] = 'p';
+                        copy.grid[i][j] = ' ';
+                        break outerLoop;
                     }
                 }
             }
         }
+        cost += 5;
         return copy;
     }
 
@@ -128,46 +140,51 @@ public class State {
         int numOfRows =copy.grid.length;
         int numOfColumns = copy.grid[0].length;
 
+        outerLoop:
         for (int i = 0; i < numOfRows; i++) {
             for (int j = 0; j < numOfColumns; j++) {
                 if (copy.grid[i][j] == 'p') {
-                    if (i > 0 && copy.grid[i-1][j] == ' ') {
-                        copy.grid[i-1][j] = 'p';
-                        copy.grid[i][j] = ' ';
-                        return copy;
-                    } else if (i > 0 && grid[i-1][j] == 'g') {
+                    if (i > 0 && copy.grid[i-1][j] == 'g') {
                         copy.grid[i-1][j] = 'p';
                         copy.grid[i][j] = ' ';
                         numOfGoals--;
-                        return copy;
+                        break outerLoop;
+                    } else if (i > 0 && grid[i-1][j] == ' ') {
+                        copy.grid[i-1][j] = 'p';
+                        copy.grid[i][j] = ' ';
+                        break outerLoop;
                     }
                 }
             }
         }
+        cost += 1;
         return copy;
     }
 
     public State moveDown(){
         State copy = deepCopy();
+
         int numOfRows =copy.grid.length;
         int numOfColumns = copy.grid[0].length;
 
+        outerLoop:
         for (int i = 0; i < numOfRows; i++) {
             for (int j = 0; j < numOfColumns; j++) {
                 if (copy.grid[i][j] == 'p') {
-                    if (i < numOfRows - 1 && copy.grid[i+1][j] == ' ') {
-                        copy.grid[i+1][j] = 'p';
-                        copy.grid[i][j] = ' ';
-                        return  copy;
-                    } else if (i < numOfRows -1  && grid[i+1][j] == 'g') {
+                    if (i < numOfRows - 1 && copy.grid[i+1][j] == 'g') {
                         copy.grid[i+1][j] = 'p';
                         copy.grid[i][j] = ' ';
                         numOfGoals--;
-                        return copy;
+                        break outerLoop;
+                    } else if (i < numOfRows - 1  && grid[i+1][j] == ' ') {
+                        copy.grid[i+1][j] = 'p';
+                        copy.grid[i][j] = ' ';
+                        break outerLoop;
                     }
                 }
             }
         }
+        cost += 2;
         return copy;
     }
 
@@ -175,14 +192,61 @@ public class State {
         return (numOfGoals == 0);
     }
 
-
+    public char getRight(char ch){
+        for (int i = 0; i < numOfGoals; i++) {
+            for (int j = 0; j < numOfGoals; j++) {
+                if (grid[i][j] == ch) {
+                    return grid[i][j+1];
+                }
+            }
+        }
+        return 'o';
+    }
+    public char getLeft(char ch){
+        for (int i = 0; i < numOfGoals; i++) {
+            for (int j = 0; j < numOfGoals; j++) {
+                if (grid[i][j] == ch) {
+                    return grid[i][j-1];
+                }
+            }
+        }
+        return 'o';
+    }
+    public char getUp(char ch){
+        for (int i = 0; i < numOfGoals; i++) {
+            for (int j = 0; j < numOfGoals; j++) {
+                if (grid[i][j] == ch) {
+                    return grid[i-1][j];
+                }
+            }
+        }
+        return 'o';
+    }
+    public char getDown(char ch){
+        for (int i = 0; i < numOfGoals; i++) {
+            for (int j = 0; j < numOfGoals; j++) {
+                if (grid[i][j] == ch) {
+                    return grid[i+1][j];
+                }
+            }
+        }
+        return 'o';
+    }
     public List<State> getNextStates (){
-        LinkedList<State> states = new LinkedList<State>();
+        LinkedList<State> states = new LinkedList<>();
 
-        states.add(moveRight());
-        states.add(moveLeft());
-        states.add(moveUp());
-        states.add(moveDown());
+        if(this.getRight('p') != 'o' || this.getRight('p') != 's') {
+            states.add(moveRight());
+        }
+        if(this.getLeft('p') != 'o' || this.getLeft('p') != 's') {
+            states.add(moveLeft());
+        }
+        if(this.getUp('p') != 'o' || this.getUp('p') != 's') {
+            states.add(moveUp());
+        }
+        if(this.getDown('p') != 'o' || this.getDown('p') != 's') {
+            states.add(moveDown());
+        }
 
         return states;
     }
@@ -245,7 +309,7 @@ public class State {
             moves++;
             var state = stack.pop();
             if(state.gameWon()){
-                System.out.println("Game Won "  + " moves took=" + moves);
+                System.out.println("Game Won "  + " moves took=" + --moves);
                 break;
             }
             var list = state.getNextStates();
@@ -272,7 +336,7 @@ public class State {
             var state = queue.remove();
 
             if (state.gameWon()) {
-                System.out.println("Game Won "  + " moves took=" + moves);
+                System.out.println("Game Won "  + " moves took=" + --moves);
                 break;
             }
 
@@ -286,6 +350,37 @@ public class State {
             }
         }
 
+    }
+
+    public void UCS(){
+        PriorityQueue<State> queue = new PriorityQueue<>(new Comparator<State>(){
+            @Override
+            public int compare(State o1, State o2) {
+                return Integer.compare(o1.getCost(), o2.getCost());
+            }
+        });
+        HashMap<State, Boolean> visited = new HashMap<>();
+
+        var current = deepCopy();
+        queue.add(current);
+        visited.put(current, true);
+
+        while (!queue.isEmpty()) {
+            current = queue.remove();
+
+            if(current.gameWon()){
+                System.out.println("Game won, the cost is:" +cost);
+            }
+
+            var list = current.getNextStates();
+
+            for(State value : list){
+                if(!visited.containsKey(value)){
+                    visited.put(value, true);
+                    queue.add(value);
+                }
+            }
+        }
     }
 
     @Override
