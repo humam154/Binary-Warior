@@ -193,19 +193,21 @@ public class State {
     }
 
     public char getRight(char ch){
-        for (int i = 0; i < numOfGoals; i++) {
-            for (int j = 0; j < numOfGoals; j++) {
-                if (grid[i][j] == ch) {
-                    return grid[i][j+1];
+        char che = ' ';
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (j + 1 < columns && grid[i][j] == ch) {
+                   che = grid[i][j+1];
+                   return che;
                 }
             }
         }
         return 'o';
     }
     public char getLeft(char ch){
-        for (int i = 0; i < numOfGoals; i++) {
-            for (int j = 0; j < numOfGoals; j++) {
-                if (grid[i][j] == ch) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (j -1 >=0 && grid[i][j] == ch) {
                     return grid[i][j-1];
                 }
             }
@@ -213,9 +215,9 @@ public class State {
         return 'o';
     }
     public char getUp(char ch){
-        for (int i = 0; i < numOfGoals; i++) {
-            for (int j = 0; j < numOfGoals; j++) {
-                if (grid[i][j] == ch) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (i - 1 >= 0 && grid[i][j] == ch) {
                     return grid[i-1][j];
                 }
             }
@@ -223,28 +225,29 @@ public class State {
         return 'o';
     }
     public char getDown(char ch){
-        for (int i = 0; i < numOfGoals; i++) {
-            for (int j = 0; j < numOfGoals; j++) {
-                if (grid[i][j] == ch) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (grid[i][j] == ch && i + 1 < rows) {
                     return grid[i+1][j];
                 }
             }
         }
         return 'o';
     }
+
     public List<State> getNextStates (){
         LinkedList<State> states = new LinkedList<>();
 
-        if(this.getRight('p') != 'o' || this.getRight('p') != 's') {
+        if(this.getRight('p') != 'o' && this.getRight('p') != 's') {
             states.add(moveRight());
         }
-        if(this.getLeft('p') != 'o' || this.getLeft('p') != 's') {
+        if(this.getLeft('p') != 'o' && this.getLeft('p') != 's') {
             states.add(moveLeft());
         }
-        if(this.getUp('p') != 'o' || this.getUp('p') != 's') {
+        if(this.getUp('p') != 'o' && this.getUp('p') != 's') {
             states.add(moveUp());
         }
-        if(this.getDown('p') != 'o' || this.getDown('p') != 's') {
+        if(this.getDown('p') != 'o' && this.getDown('p') != 's') {
             states.add(moveDown());
         }
 
@@ -322,7 +325,6 @@ public class State {
             }
         }
     }
-
     public void BFS() {
         Queue<State> queue = new LinkedList<>();
         HashMap<State, Boolean> visited = new HashMap<>();
@@ -351,7 +353,6 @@ public class State {
         }
 
     }
-
     public void UCS(){
         PriorityQueue<State> queue = new PriorityQueue<>(new Comparator<State>(){
             @Override

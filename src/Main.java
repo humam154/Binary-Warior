@@ -26,13 +26,13 @@ public class Main {
         state.setGrid(grid);
 
 
-        var list = state.getNextStates();
+        /*var list = state.getNextStates();
         for(int i = 0; i < list.size(); i++) {
             list.get(i).printGrid();
             System.out.println();
-        }
+        }*/
         //state.play();
-        //state.DFS();
+        state.UCS();
 
     }
 
