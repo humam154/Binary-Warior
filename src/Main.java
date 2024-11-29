@@ -5,9 +5,9 @@ public class Main {
         char[][] grid = {
                 {'s', 'o', 'o',  's'},
                 {'s', ' ', 'g',  's'},
+                {'s', ' ', 'o',  's'},
                 {'s', ' ', ' ',  's'},
-                {'s', ' ', ' ',  's'},
-                {'s', 'p', ' ',  'g'},
+                {'s', 'p', 'o',  'g'},
                 {'s', 'o', 'o',  's'}
         };
 
@@ -25,14 +25,10 @@ public class Main {
         State state = new State( rows,  columns, numOfGoals);
         state.setGrid(grid);
 
-
-        /*var list = state.getNextStates();
-        for(int i = 0; i < list.size(); i++) {
-            list.get(i).printGrid();
-            System.out.println();
-        }*/
-        //state.play();
+        /*state.DFS();
+        state.BFS();
         state.UCS();
+        state.hillClimbing();*/
 
     }
 
